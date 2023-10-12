@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
-import { Routes, Route, Link, useMatch} from 'react-router-dom'
+import { Routes, Route, Link, useMatch, useNavigate} from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -41,7 +42,6 @@ const About = () => (
 )
 
 const Anecdote = ({ anecdote }) => {
-  console.log(anecdote)
   return(
   <div>
     <h2>{anecdote.content}</h2>
@@ -63,16 +63,21 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
+  const navigate = useNavigate()
+
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    const newAnec = props.addNew({
       content,
       author,
       info,
       votes: 0
     })
+    props.setNotification(`A new anecdote ${newAnec.content} was created!`)
+    setTimeout(() => props.setNotification(''), 5000)
+    navigate('/')
   }
 
   return (
@@ -122,6 +127,11 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    return anecdote
+  }
+
+  const Notification = ({ notification })  => {
+    return notification ? <div>{notification}</div> : null
   }
   
   const anecdoteById = (id) =>
@@ -141,15 +151,20 @@ const App = () => {
   const anecdote = match 
     ? anecdoteById(Number(match.params.id)) 
     : null  
-  console.log(anecdote)
   
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification}/>
       <Routes>
         <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path='/create' element={<CreateNew addNew={addNew} />} />
+        <Route path='/create' element={
+          <CreateNew 
+          addNew={addNew} 
+          notification={notification} 
+          setNotification={setNotification}/>
+          } />
         <Route path='/about' element={<About />} />
         <Route path='/anecdote/:id' element={<Anecdote anecdote={anecdote} />} />
       </Routes>
