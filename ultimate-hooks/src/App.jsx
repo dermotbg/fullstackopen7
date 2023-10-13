@@ -17,11 +17,17 @@ const useField = (type) => {
 
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
-
-  // ...
+  
+  useEffect(() => {
+  axios.get(baseUrl)
+    .then(response => setResources(response.data))
+    .catch(error => console.error(error))
+    },[resources, baseUrl])
 
   const create = (resource) => {
-    // ...
+    axios.post(baseUrl, resource)
+      .then(response => console.log(response.data))
+      .catch(error => console.error(error))
   }
 
   const service = {
@@ -43,12 +49,18 @@ const App = () => {
 
   const handleNoteSubmit = (event) => {
     event.preventDefault()
-    noteService.create({ content: content.value })
+    noteService.create({ 
+      content: content.value, 
+      timestamp: new Date().toISOString(), 
+      important: false 
+    })
   }
  
   const handlePersonSubmit = (event) => {
     event.preventDefault()
-    personService.create({ name: name.value, number: number.value})
+    personService.create({ 
+      name: name.value, 
+      number: number.value})
   }
 
   return (
