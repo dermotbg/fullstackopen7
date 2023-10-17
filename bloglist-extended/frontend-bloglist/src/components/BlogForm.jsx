@@ -1,49 +1,48 @@
-import PropTypes from 'prop-types'
-import { useState } from 'react'
+// import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { addBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
+import { useRef } from 'react'
+import Togglable from './Togglable'
 
-const BlogForm = ({ createBlog }) => {
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+const BlogForm = () => {
 
-  const addBlog = (event) => {
+  const dispatch = useDispatch()
+  const blogFormRef = useRef()
+
+  const submitBlog = (event) => {
     event.preventDefault()
-    createBlog({
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    })
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
+    blogFormRef.current.toggleVisible()
+    const blogObj = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value
+    }
+    dispatch(addBlog(blogObj))
+    dispatch(setNotification(`A New Blog: ${event.target.title.value} by ${event.target.author.value} added`, false))
   }
-  BlogForm.propTypes = {
-    createBlog: PropTypes.func.isRequired
-  }
+  // BlogForm.propTypes = {
+  //   createBlog: PropTypes.func.isRequired
+  // }
   return (
+    <Togglable buttonLabel="create blog" ref={blogFormRef}>
     <div>
       <h2>create new</h2>
-      <form onSubmit={addBlog}>
+      <form onSubmit={submitBlog}>
         <div>
           <input
-            value={newTitle}
-            onChange={(event) => setNewTitle(event.target.value)}
             placeholder="title"
             id="title"
           />
         </div>
         <div>
           <input
-            value={newAuthor}
-            onChange={(event) => setNewAuthor(event.target.value)}
             placeholder="author"
             id="author"
           />
         </div>
         <div>
           <input
-            value={newUrl}
-            onChange={(event) => setNewUrl(event.target.value)}
             placeholder="url"
             id="url"
           />
@@ -53,6 +52,7 @@ const BlogForm = ({ createBlog }) => {
         </button>
       </form>
     </div>
+    </Togglable>
   )
 }
 
