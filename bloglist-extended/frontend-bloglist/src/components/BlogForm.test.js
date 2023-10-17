@@ -29,10 +29,8 @@ test('Calls createBlog with right details when new blog is created', async () =>
   const createButton = screen.getByText('create')
   await user.click(createButton)
 
-
   expect(createBlog.mock.calls).toHaveLength(1)
   expect(createBlog.mock.calls[0][0].title).toBe('created in test')
   expect(createBlog.mock.calls[0][0].author).toBe('Tim Tester')
   expect(createBlog.mock.calls[0][0].url).toBe('www.shouldnotshow.com')
-
 })

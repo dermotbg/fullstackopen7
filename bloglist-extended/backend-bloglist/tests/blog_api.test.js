@@ -14,12 +14,12 @@ beforeEach(async () => {
   await user.save()
 
   await Blog.deleteMany({})
-  const blogObjs = helper.initialBlogs
-    .map(b => new Blog({ ...b, user: user._id })) // adding in users _id to blog creation so the middleware picks it up.
-  const promiseArray = blogObjs.map(b => b.save())
+  const blogObjs = helper.initialBlogs.map(
+    (b) => new Blog({ ...b, user: user._id })
+  ) // adding in users _id to blog creation so the middleware picks it up.
+  const promiseArray = blogObjs.map((b) => b.save())
   await Promise.all(promiseArray)
 })
-
 
 describe('All blogs are returned', () => {
   test('return all blogs', async () => {
@@ -36,7 +36,7 @@ describe('All blogs are returned', () => {
 describe('Verification of id definition', () => {
   test('verify blogs id is defined as id', async () => {
     const resp = await api.get('/api/blogs')
-    resp.body.forEach( (r) => {
+    resp.body.forEach((r) => {
       expect(r.id).toBeDefined()
     })
   })
@@ -44,7 +44,6 @@ describe('Verification of id definition', () => {
 
 describe('Blog creation', () => {
   test('a valid blog can be added', async () => {
-
     const token = await helper.generateToken()
 
     const newBlog = {
@@ -63,12 +62,11 @@ describe('Blog creation', () => {
 
     const response = await helper.blogsInDB()
     expect(response).toHaveLength(helper.initialBlogs.length + 1)
-    const titles = response.map(r => r.title)
+    const titles = response.map((r) => r.title)
     expect(titles).toContain('Blog created in test')
   })
 
   test('a blog without a token is rejected', async () => {
-
     const newBlog = {
       title: 'A blog with no token',
       author: 'Dermot',
@@ -84,11 +82,10 @@ describe('Blog creation', () => {
 
     const response = await helper.blogsInDB()
     expect(response).toHaveLength(helper.initialBlogs.length)
-    const titles = response.map(r => r.title)
+    const titles = response.map((r) => r.title)
     expect(titles).not.toContain('A blog with no token')
   })
 })
-
 
 describe('Default behaviour', () => {
   test('empty likes value defaults to zero', async () => {
@@ -107,10 +104,9 @@ describe('Default behaviour', () => {
       .expect('Content-Type', /application\/json/)
 
     const response = await helper.blogsInDB()
-    const result = response.find(r => r.title === 'Empty likes value')
+    const result = response.find((r) => r.title === 'Empty likes value')
     expect(result.likes).toEqual(0)
   })
-
 })
 
 describe('Rejecting missing values', () => {
@@ -120,12 +116,9 @@ describe('Rejecting missing values', () => {
       url: '/test/blog',
       likes: 9
     }
-    await api
-      .post('/api/blogs')
-      .send([blogWithoutTitle])
-      .expect(400)
+    await api.post('/api/blogs').send([blogWithoutTitle]).expect(400)
     const response = await helper.blogsInDB()
-    expect(response.map(r => r.author)).not.toContain('Invalid Title')
+    expect(response.map((r) => r.author)).not.toContain('Invalid Title')
   })
 
   test('blogs without url will be rejected', async () => {
@@ -134,14 +127,10 @@ describe('Rejecting missing values', () => {
       author: 'Dermot',
       likes: 5
     }
-    await api
-      .post('/api/blogs')
-      .send(blogWithoutURL)
-      .expect(400)
+    await api.post('/api/blogs').send(blogWithoutURL).expect(400)
 
     const response = await helper.blogsInDB()
-    expect(response.map(r => r.title)).not.toContain('Blog without URL')
-
+    expect(response.map((r) => r.title)).not.toContain('Blog without URL')
   })
 })
 
@@ -149,10 +138,8 @@ describe('Deleting and Updating blogs', () => {
   test('blogs can be deleted', async () => {
     const token = await helper.generateToken()
 
-
     const blogsAtStart = await helper.blogsInDB()
     const blogToDelete = blogsAtStart[0]
-
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
@@ -161,7 +148,7 @@ describe('Deleting and Updating blogs', () => {
 
     const blogsAtEnd = await helper.blogsInDB()
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
-    const contents = blogsAtEnd.map(b => b.id)
+    const contents = blogsAtEnd.map((b) => b.id)
     expect(contents).not.toContain(blogToDelete.id)
   })
 
@@ -197,7 +184,7 @@ describe('User Creation', () => {
     const newUser = {
       username: 'defaultuser',
       name: 'Default User',
-      password: 'pazzwurd',
+      password: 'pazzwurd'
     }
     await api
       .post('/api/users')
@@ -206,8 +193,8 @@ describe('User Creation', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toHaveLength(usersAtStart.length +1)
-    const usernames = usersAtEnd.map(u => u.username)
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+    const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
   })
 
@@ -240,7 +227,9 @@ describe('User Creation', () => {
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
-    expect(result.body.error).toContain('User validation failed: username: Path `username` (`te`) is shorter than the minimum allowed length (3)')
+    expect(result.body.error).toContain(
+      'User validation failed: username: Path `username` (`te`) is shorter than the minimum allowed length (3)'
+    )
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toEqual(usersAtStart)
   })
@@ -257,7 +246,9 @@ describe('User Creation', () => {
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
-    expect(result.body.error).toContain('password must be longer that 3 characters')
+    expect(result.body.error).toContain(
+      'password must be longer that 3 characters'
+    )
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toEqual(usersAtStart)
   })
@@ -294,7 +285,6 @@ describe('User Creation', () => {
     expect(usersAtEnd).toEqual(usersAtStart)
   })
 })
-
 
 afterAll(async () => {
   await mongoose.connection.close()

@@ -11,13 +11,13 @@ const middleware = require('./utils/middleware')
 const { MDB_URI } = require('./utils/config')
 const logger = require('./utils/logger')
 
-
 mongoose.set('strictQuery', false)
-mongoose.connect(MDB_URI)
+mongoose
+  .connect(MDB_URI)
   .then(() => {
     logger.info('connected to DB')
   })
-  .catch(error => {
+  .catch((error) => {
     logger.error('Error connecting to DB', error.message)
   })
 
@@ -31,7 +31,7 @@ app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
-if(process.env.NODE_ENV === 'test'){
+if (process.env.NODE_ENV === 'test') {
   const testRouter = require('./controllers/testing')
   app.use('/api/testing', testRouter)
 }

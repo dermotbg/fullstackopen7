@@ -1,14 +1,14 @@
 .message {
-    color: green;
-    background: lightgrey;
-    font-size: 20px;
-    border-style: solid;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
+  color: green;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 .blogStyle {
-    border: solid 1px black;
-    padding: 10px 0 0 2px;
-    margin: 5px 0 5px 0;
+  border: solid 1px black;
+  padding: 10px 0 0 2px;
+  margin: 5px 0 5px 0;
 }

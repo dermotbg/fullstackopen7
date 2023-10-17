@@ -20,14 +20,37 @@ const BlogForm = ({ createBlog }) => {
   BlogForm.propTypes = {
     createBlog: PropTypes.func.isRequired
   }
-  return(
+  return (
     <div>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
-        <div><input value={newTitle} onChange={event => setNewTitle(event.target.value)} placeholder='title' id='title' /></div>
-        <div><input value={newAuthor} onChange={event => setNewAuthor(event.target.value)} placeholder='author' id='author' /></div>
-        <div><input value={newUrl} onChange={event => setNewUrl(event.target.value)} placeholder='url' id='url' /></div>
-        <button type="submit" id='submit'>create</button>
+        <div>
+          <input
+            value={newTitle}
+            onChange={(event) => setNewTitle(event.target.value)}
+            placeholder="title"
+            id="title"
+          />
+        </div>
+        <div>
+          <input
+            value={newAuthor}
+            onChange={(event) => setNewAuthor(event.target.value)}
+            placeholder="author"
+            id="author"
+          />
+        </div>
+        <div>
+          <input
+            value={newUrl}
+            onChange={(event) => setNewUrl(event.target.value)}
+            placeholder="url"
+            id="url"
+          />
+        </div>
+        <button type="submit" id="submit">
+          create
+        </button>
       </form>
     </div>
   )

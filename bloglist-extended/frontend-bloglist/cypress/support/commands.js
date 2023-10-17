@@ -25,11 +25,13 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('login', ({ username, password }) => {
-  cy.request('POST', `${Cypress.env('BACKEND')}/login`, { username, password })
-    .then(({ body }) => {
-      localStorage.setItem('loggedInAppUser', JSON.stringify(body))
-      cy.visit('')
-    })
+  cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
+    username,
+    password
+  }).then(({ body }) => {
+    localStorage.setItem('loggedInAppUser', JSON.stringify(body))
+    cy.visit('')
+  })
 })
 
 Cypress.Commands.add('createBlog', ({ title, author, url }) => {
@@ -38,7 +40,9 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
     method: 'POST',
     body: { title, author, url },
     headers: {
-      'Authorization': `Bearer ${JSON.parse(localStorage.getItem('loggedInAppUser')).token}`
+      Authorization: `Bearer ${
+        JSON.parse(localStorage.getItem('loggedInAppUser')).token
+      }`
     }
   })
   cy.visit('')

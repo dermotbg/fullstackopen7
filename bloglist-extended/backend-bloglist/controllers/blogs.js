@@ -5,17 +5,19 @@ const jwt = require('jsonwebtoken')
 const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (_request, response) => {
-  const blogs = await Blog.find({})
-    .populate('user', { username: 1, name: 1, id: 1 })
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1,
+    id: 1
+  })
   response.json(blogs)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
-  if (blog){
+  if (blog) {
     response.json(blog)
-  }
-  else {
+  } else {
     response.status(404).end()
   }
 })
@@ -25,10 +27,9 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 
   if (body.title === undefined || body.url === undefined) {
     response.status(400).end()
-  }
-  else {
+  } else {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id){
+    if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
     const user = request.user
@@ -52,14 +53,13 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-  if (!decodedToken.id){
+  if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
   if (decodedToken.id.toString() === request.user.id.toString()) {
     await Blog.findByIdAndRemove(request.params.id)
     return response.status(204).end()
-  }
-  else{
+  } else {
     return response.status(403).json({ error: 'unauthorized user' })
   }
 })
@@ -74,7 +74,11 @@ blogsRouter.put('/:id', async (request, response) => {
     url: body.url,
     id: body.id
   }
-  await Blog.findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
+  await Blog.findByIdAndUpdate(request.params.id, blog, {
+    new: true,
+    runValidators: true,
+    context: 'query'
+  })
   response.status(204).end()
 })
 module.exports = blogsRouter

@@ -18,11 +18,8 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -39,15 +36,12 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
 
-      window.localStorage.setItem(
-        'loggedInAppUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedInAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-    }
-    catch (exception) {
+    } catch (exception) {
       console.log(exception)
       setIsError(true)
       setErrorMessage('Wrong Credentials')
@@ -63,7 +57,6 @@ const App = () => {
     setUser(null)
   }
 
-
   const addBlog = async (blogObj) => {
     blogFormRef.current.toggleVisible()
     try {
@@ -71,12 +64,13 @@ const App = () => {
       console.log(response)
       setBlogs(blogs.concat(response))
 
-      setErrorMessage(`A New Blog: ${response.title} by ${response.author} added`)
+      setErrorMessage(
+        `A New Blog: ${response.title} by ${response.author} added`
+      )
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-    }
-    catch (exception){
+    } catch (exception) {
       console.log(exception)
     }
   }
@@ -94,37 +88,45 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input type="text"
+            <input
+              type="text"
               value={username}
-              name='Username'
-              className='username'
-              onChange={({ target }) => setUsername(target.value)} />
+              name="Username"
+              className="username"
+              onChange={({ target }) => setUsername(target.value)}
+            />
           </div>
           <div>
             password
-            <input type="password"
+            <input
+              type="password"
               value={password}
-              name='Password'
-              className='password'
-              onChange={({ target }) => setPassword(target.value)} />
+              name="Password"
+              className="password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
           </div>
-          <button type='Submit' id='loginButton'>Login</button>
+          <button type="Submit" id="loginButton">
+            Login
+          </button>
         </form>
       </div>
-    )}
+    )
+  }
   return (
     <div>
       <h2>blogs</h2>
       <Notification message={errorMessage} error={isError} />
-      <p>{user.name} logged in
+      <p>
+        {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-      <Togglable buttonLabel='create blog' ref={blogFormRef}>
-        <BlogForm createBlog={addBlog}/>
+      <Togglable buttonLabel="create blog" ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs.map(blog =>
+      {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
-      )}
+      ))}
     </div>
   )
 }

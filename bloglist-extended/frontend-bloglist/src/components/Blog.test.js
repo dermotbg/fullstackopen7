@@ -24,7 +24,6 @@ beforeEach(() => {
   )
 })
 
-
 test('renders title/author, but not URL/likes', () => {
   const mockHandler = jest.fn()
 
@@ -37,18 +36,18 @@ test('renders title/author, but not URL/likes', () => {
   const extraInfo = container.querySelector('.extraInfo')
 
   expect(extraInfo).toHaveStyle('display: none')
-
 })
 
 test('URL & likes shown after view button clicked', async () => {
   const mockUpdate = jest.fn()
   const mockToggle = jest.fn()
 
-  const { container } = render(<Blog blog={blog} testToggleVisible={mockToggle} updateBlogs={mockUpdate} />) //mockUpdate needed for component requirement
+  const { container } = render(
+    <Blog blog={blog} testToggleVisible={mockToggle} updateBlogs={mockUpdate} />
+  ) //mockUpdate needed for component requirement
   const button = screen.getByText('view')
 
   await userEvent.click(button)
-
 
   const extraInfo = container.querySelector('.extraInfo')
   expect(mockToggle.mock.calls).toHaveLength(1)
@@ -59,7 +58,9 @@ test('Double click on like button returns two function calls', async () => {
   const mockUpdate = jest.fn()
   const mockLike = jest.fn()
 
-  render(<Blog blog={blog} testLikeHandler={mockLike} updateBlogs={mockUpdate} />)
+  render(
+    <Blog blog={blog} testLikeHandler={mockLike} updateBlogs={mockUpdate} />
+  )
   const button = screen.getByText('like')
 
   await userEvent.dblClick(button)

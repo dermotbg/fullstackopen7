@@ -13,13 +13,13 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
 
   const toggleVisible = () => {
     setVisible(!visible)
-    if(testToggleVisible){
+    if (testToggleVisible) {
       testToggleVisible()
     }
   }
 
   const likeHandler = async (event) => {
-    if(testLikeHandler){
+    if (testLikeHandler) {
       testLikeHandler()
       return
     }
@@ -34,9 +34,8 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
     }
     try {
       await blogService.like(blogObj)
-      likes === blog.likes ? setLikes(blog.likes + 1) : setLikes(likes -1)
-    }
-    catch (exception){
+      likes === blog.likes ? setLikes(blog.likes + 1) : setLikes(likes - 1)
+    } catch (exception) {
       console.log(exception)
     }
   }
@@ -44,18 +43,19 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   const deleteHandler = async (event) => {
     event.preventDefault()
 
-    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`) && blog.user.username === user.username){
+    if (
+      window.confirm(`Remove blog ${blog.title} by ${blog.author}?`) &&
+      blog.user.username === user.username
+    ) {
       blog.token = user.token
       try {
         await blogService.deleteBlog(blog)
         updateBlogs()
         alert('Blog deleted')
-      }
-      catch(exception){
+      } catch (exception) {
         console.log(exception)
       }
-    }
-    else{
+    } else {
       alert('blog not deleted, unauthorized user')
     }
   }
@@ -67,21 +67,22 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
 
   return (
     <div className="blogStyle">
-      <div className='title'>
+      <div className="title">
         {blog.title} by {blog.author}
         <button onClick={toggleVisible}>{visible ? 'hide' : 'view'}</button>
       </div>
-      <div style={showWhenVisible} className='extraInfo'>
-        <div>
-          {blog.url}
+      <div style={showWhenVisible} className="extraInfo">
+        <div>{blog.url}</div>
+        <div className="likeContainer">
+          likes: {likes}{' '}
+          <button onClick={likeHandler} className="likeButton">
+            {likes === blog.likes ? 'like' : 'unlike'}
+          </button>
         </div>
-        <div className='likeContainer'>
-          likes: {likes} <button onClick={likeHandler} className='likeButton'>{ likes === blog.likes ? 'like' : 'unlike' }</button>
-        </div>
-        <div>
-          {blog.user.name ? blog.user.name : user.name}
-        </div>
-        {blog.user.username === user.username ? <button onClick={deleteHandler}>delete</button> : null}
+        <div>{blog.user.name ? blog.user.name : user.name}</div>
+        {blog.user.username === user.username ? (
+          <button onClick={deleteHandler}>delete</button>
+        ) : null}
       </div>
     </div>
   )
