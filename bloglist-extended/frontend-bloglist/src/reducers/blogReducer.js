@@ -39,15 +39,10 @@ export const addBlog = blogObj => {
   }
 }
 
-export const likeBlog = (blogObj, id) => {
+export const likeBlog = (blogObj) => {
   return async dispatch => {
-    const update = {
-      ...blogObj,
-      user: id,
-      likes: blogObj.likes + 1
-    }
-    await blogService.like(update)
-    dispatch(addLike(update))
+    await blogService.like(blogObj)
+    dispatch(addLike(blogObj))
   }
 }
 
