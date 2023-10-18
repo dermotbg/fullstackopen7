@@ -17,7 +17,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const blogFormRef = useRef()
+  // const blogFormRef = useRef()
   const dispatch = useDispatch()
 
   useEffect(() => {

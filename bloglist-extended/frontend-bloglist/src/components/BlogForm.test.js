@@ -15,7 +15,7 @@ test('Calls createBlog with right details when new blog is created', async () =>
   const createBlog = jest.fn()
   const user = userEvent.setup()
 
-  render(<BlogForm createBlog={createBlog} />)
+  render(<BlogForm testcreateBlog={createBlog} />)
 
   const titleInput = screen.getByPlaceholderText('title')
   await user.type(titleInput, blog.title)

@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   const [visible, setVisible] = useState(false)
-  // add likes state to add/subtract per load, can be added twice on page reload but not writing liked user data to db
-  const [likes, setLikes] = useState(blog.likes)
+
+  const dispatch = useDispatch()
 
   const showWhenVisible = { display: visible ? '' : 'none' }
 
@@ -25,19 +26,11 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
     }
     event.preventDefault()
     const blogObj = {
+      ...blog,
       user: blog.user.id,
-      likes: likes === blog.likes ? blog.likes + 1 : likes - 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
+      likes: blog.likes + 1
     }
-    try {
-      await blogService.like(blogObj)
-      likes === blog.likes ? setLikes(blog.likes + 1) : setLikes(likes - 1)
-    } catch (exception) {
-      console.log(exception)
-    }
+    dispatch(likeBlog(blogObj))
   }
 
   const deleteHandler = async (event) => {
@@ -45,16 +38,12 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
 
     if (
       window.confirm(`Remove blog ${blog.title} by ${blog.author}?`) &&
-      blog.user.username === user.username
-    ) {
-      blog.token = user.token
-      try {
-        await blogService.deleteBlog(blog)
-        updateBlogs()
-        alert('Blog deleted')
-      } catch (exception) {
-        console.log(exception)
+      blog.user.username === user.username) {
+      const dummyBlog = {
+        ...blog,
+        token: user.token
       }
+      dispatch(removeBlog(dummyBlog))
     } else {
       alert('blog not deleted, unauthorized user')
     }
@@ -74,9 +63,9 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
       <div style={showWhenVisible} className="extraInfo">
         <div>{blog.url}</div>
         <div className="likeContainer">
-          likes: {likes}{' '}
+          likes: {blog.likes}{' '}
           <button onClick={likeHandler} className="likeButton">
-            {likes === blog.likes ? 'like' : 'unlike'}
+            like
           </button>
         </div>
         <div>{blog.user.name ? blog.user.name : user.name}</div>

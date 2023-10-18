@@ -5,18 +5,27 @@ import { setNotification } from '../reducers/notificationReducer'
 import { useRef } from 'react'
 import Togglable from './Togglable'
 
-const BlogForm = () => {
+const BlogForm = ({ testCreateBlog }) => {
 
   const dispatch = useDispatch()
   const blogFormRef = useRef()
+  const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
+
+
+
 
   const submitBlog = (event) => {
+    if(testCreateBlog){
+      testCreateBlog()
+      return
+    }
     event.preventDefault()
     blogFormRef.current.toggleVisible()
     const blogObj = {
       title: event.target.title.value,
       author: event.target.author.value,
-      url: event.target.url.value
+      url: event.target.url.value,
+      user: user
     }
     dispatch(addBlog(blogObj))
     dispatch(setNotification(`A New Blog: ${event.target.title.value} by ${event.target.author.value} added`, false))
