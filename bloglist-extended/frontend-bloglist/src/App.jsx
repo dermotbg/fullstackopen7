@@ -5,8 +5,11 @@ import { setNotification } from './reducers/notificationReducer'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import Users from './components/Users'
+import Home from './components/Home'
 import { getBlogs } from './reducers/blogReducer'
 import { loginReq, checkUser, logoutUser } from './reducers/userReducer'
+import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -77,10 +80,14 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-        <BlogForm />
-      {blogs.map((blog) => (
+        {/* <BlogForm /> */}
+      {/* {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
-      ))}
+      ))} */}
+        <Routes>
+          <Route path='/' element={<Home blogs={blogs} updateBlogs={updateBlogs}/>} /> 
+          <Route path='/users' element={<Users />} />
+        </Routes> 
     </div>
   )
 }
