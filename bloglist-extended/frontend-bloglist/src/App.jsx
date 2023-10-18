@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import Blog from './components/Blog'
 import Notification from './components/Notification'
 import User from './components/User'
 import Users from './components/Users'
@@ -91,6 +92,7 @@ const App = () => {
           <Route path='/' element={<Home blogs={blogs} updateBlogs={updateBlogs}/>} /> 
           <Route path='/users' element={<Users users={users}/>} />
           <Route path='/user/:id' element={<User users={users}/>}/>
+          <Route path='blog/:id' element={<Blog blogs={blogs}/>} />
         </Routes> 
     </div>
   )

@@ -1,81 +1,26 @@
-import PropTypes from 'prop-types'
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { useDispatch } from "react-redux"
+import { useMatch } from "react-router-dom"
+import { likeBlog } from "../reducers/blogReducer"
 
-const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blogs }) => {
+    if(!blogs) return <div>blog coming soon....</div>
+    const match = useMatch('/blog/:id')
+    const dispatch = useDispatch()
+    
 
-  const dispatch = useDispatch()
+    const blog = match
+        ? blogs.find(blog => blog.id === String(match.params.id))
+        : null
+    if(!blog) return <div>No blog located</div>
 
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-  const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
-  if (!user) return null
-
-  const toggleVisible = () => {
-    setVisible(!visible)
-    if (testToggleVisible) {
-      testToggleVisible()
-    }
-  }
-
-  const likeHandler = async (event) => {
-    if (testLikeHandler) {
-      testLikeHandler()
-      return
-    }
-    event.preventDefault()
-    const blogObj = {
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1
-    }
-    dispatch(likeBlog(blogObj))
-  }
-
-  const deleteHandler = async (event) => {
-    event.preventDefault()
-
-    if (
-      window.confirm(`Remove blog ${blog.title} by ${blog.author}?`) &&
-      blog.user.username === user.username) {
-      const dummyBlog = {
-        ...blog,
-        token: user.token
-      }
-      dispatch(removeBlog(dummyBlog))
-    } else {
-      alert('blog not deleted, unauthorized user')
-    }
-  }
-
-  Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
-    updateBlogs: PropTypes.func.isRequired
-  }
-
-  return (
-    <div className="blogStyle">
-      <div className="title">
-        {blog.title} by {blog.author}
-        <button onClick={toggleVisible}>{visible ? 'hide' : 'view'}</button>
-      </div>
-      <div style={showWhenVisible} className="extraInfo">
-        <div>{blog.url}</div>
-        <div className="likeContainer">
-          likes: {blog.likes}{' '}
-          <button onClick={likeHandler} className="likeButton">
-            like
-          </button>
+    return(
+        <div>
+            <h1>{blog.title} {blog.author}</h1>
+            <a href={`https://${blog.url}`}><div>{blog.url}</div></a>
+            <div>Likes: {blog.likes} <button onClick={() => dispatch(likeBlog(blog, blog.user.id))}>Like</button></div> 
+            <div>Added By: {blog.user.name}</div>
         </div>
-        <div>{blog.user.name ? blog.user.name : user.name}</div>
-        {blog.user.username === user.username ? (
-          <button onClick={deleteHandler}>delete</button>
-        ) : null}
-      </div>
-    </div>
-  )
+    )
 }
 
 export default Blog

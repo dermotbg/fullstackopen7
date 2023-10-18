@@ -2,7 +2,7 @@ import React from 'react'
 import '@testing-library/jest-dom'
 import '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
-import Blog from './Blog'
+import BlogList from './BlogList'
 import userEvent from '@testing-library/user-event'
 
 const blog = {
@@ -27,7 +27,7 @@ beforeEach(() => {
 test('renders title/author, but not URL/likes', () => {
   const mockHandler = jest.fn()
 
-  const { container } = render(<Blog blog={blog} updateBlogs={mockHandler} />)
+  const { container } = render(<BlogList blog={blog} updateBlogs={mockHandler} />)
   const title = container.querySelector('.title')
 
   expect(title).toHaveTextContent('created in test')
@@ -43,7 +43,7 @@ test('URL & likes shown after view button clicked', async () => {
   const mockToggle = jest.fn()
 
   const { container } = render(
-    <Blog blog={blog} testToggleVisible={mockToggle} updateBlogs={mockUpdate} />
+    <BlogList blog={blog} testToggleVisible={mockToggle} updateBlogs={mockUpdate} />
   ) //mockUpdate needed for component requirement
   const button = screen.getByText('view')
 
@@ -59,7 +59,7 @@ test('Double click on like button returns two function calls', async () => {
   const mockLike = jest.fn()
 
   render(
-    <Blog blog={blog} testLikeHandler={mockLike} updateBlogs={mockUpdate} />
+    <BlogList blog={blog} testLikeHandler={mockLike} updateBlogs={mockUpdate} />
   )
   const button = screen.getByText('like')
 
