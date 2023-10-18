@@ -1,48 +1,30 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
 import Notification from './components/Notification'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import { getBlogs } from './reducers/blogReducer'
+import { loginReq, checkUser, logoutUser } from './reducers/userReducer'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user) 
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-
-  // const blogFormRef = useRef()
   const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(checkUser())
     dispatch(getBlogs())
   }, [])
 
-  useEffect(() => {
-    const loggedInUserJSON = window.localStorage.getItem('loggedInAppUser')
-    if (loggedInUserJSON) {
-      const user = JSON.parse(loggedInUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
 
   const handleLogin = async (event) => {
     event.preventDefault()
+    const userObj = { username: event.target.username.value, password: event.target.password.value}
     try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedInAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      dispatch(loginReq(userObj))
     } catch (exception) {
       dispatch(setNotification('Wrong Credentials', true))
     }
@@ -51,31 +33,14 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedInAppUser')
-    setUser(null)
+    dispatch(logoutUser())
   }
-
-  // const addBlog = async (blogObj) => {
-  //   blogFormRef.current.toggleVisible()
-  //   try {
-  //     const response = await blogService.create(blogObj)
-  //     console.log(response)
-  //     dispatch(setBlogs(blogs.concat(response)))
-  //     dispatch(setNotification(`A New Blog: ${response.title} by ${response.author} added`, false))
-  //   } catch (exception) {
-  //     console.log(exception)
-  //   }
-  // }
-
-  // const updateBlogs = async () => {
-  //   const blogs = await blogService.getAll()
-  //   setBlogs(blogs)
-  // }
 
   const updateBlogs = () => {
     dispatch(getBlogs())
   }
 
-  if (user === null) {
+  if (!user) {
     return (
       <div>
         <h2>Log in to application</h2>
@@ -85,20 +50,16 @@ const App = () => {
             username
             <input
               type="text"
-              value={username}
-              name="Username"
+              name="username"
               className="username"
-              onChange={({ target }) => setUsername(target.value)}
             />
           </div>
           <div>
             password
             <input
               type="password"
-              value={password}
-              name="Password"
+              name="password"
               className="password"
-              onChange={({ target }) => setPassword(target.value)}
             />
           </div>
           <button type="Submit" id="loginButton">

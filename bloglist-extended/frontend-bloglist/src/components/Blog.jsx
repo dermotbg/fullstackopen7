@@ -11,6 +11,7 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   const showWhenVisible = { display: visible ? '' : 'none' }
 
   const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
+  if (!user) return null
 
   const toggleVisible = () => {
     setVisible(!visible)
