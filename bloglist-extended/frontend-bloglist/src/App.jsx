@@ -5,21 +5,24 @@ import { setNotification } from './reducers/notificationReducer'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import User from './components/User'
 import Users from './components/Users'
 import Home from './components/Home'
 import { getBlogs } from './reducers/blogReducer'
 import { loginReq, checkUser, logoutUser } from './reducers/userReducer'
+import { pullUsers } from './reducers/allUsersReducer'
 import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user) 
-
+  const users = useSelector(state => state.allUsers)
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(checkUser())
     dispatch(getBlogs())
+    dispatch(pullUsers())
   }, [])
 
 
@@ -86,7 +89,8 @@ const App = () => {
       ))} */}
         <Routes>
           <Route path='/' element={<Home blogs={blogs} updateBlogs={updateBlogs}/>} /> 
-          <Route path='/users' element={<Users />} />
+          <Route path='/users' element={<Users users={users}/>} />
+          <Route path='/user/:id' element={<User users={users}/>}/>
         </Routes> 
     </div>
   )
