@@ -12,7 +12,9 @@ import Home from './components/Home'
 import { getBlogs } from './reducers/blogReducer'
 import { loginReq, checkUser, logoutUser } from './reducers/userReducer'
 import { pullUsers } from './reducers/allUsersReducer'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Link } from 'react-router-dom'
+
+import { AppBar, Button, Toolbar, IconButton } from '@mui/material'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -78,6 +80,18 @@ const App = () => {
   }
   return (
     <div>
+      <AppBar postition='fixed' color='secondary'>
+        <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu">
+          </IconButton>
+          <Button color='inherit' component={Link} to='/'>
+            Home
+          </Button>
+          <Button color='inherit' component={Link} to='/users'>
+            Users
+          </Button>
+        </Toolbar>
+      </AppBar>
       <h2>blogs</h2>
       <Notification />
       <p>
@@ -92,7 +106,7 @@ const App = () => {
           <Route path='/' element={<Home blogs={blogs} updateBlogs={updateBlogs}/>} /> 
           <Route path='/users' element={<Users users={users}/>} />
           <Route path='/user/:id' element={<User users={users}/>}/>
-          <Route path='blog/:id' element={<Blog blogs={blogs}/>} />
+          <Route path='blogs/:id' element={<Blog blogs={blogs}/>} />
         </Routes> 
     </div>
   )

@@ -1,4 +1,3 @@
-// import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 import { addBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
@@ -10,8 +9,6 @@ const BlogForm = ({ testCreateBlog }) => {
   const dispatch = useDispatch()
   const blogFormRef = useRef()
   const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
-
-
 
 
   const submitBlog = (event) => {
@@ -30,9 +27,7 @@ const BlogForm = ({ testCreateBlog }) => {
     dispatch(addBlog(blogObj))
     dispatch(setNotification(`A New Blog: ${event.target.title.value} by ${event.target.author.value} added`, false))
   }
-  // BlogForm.propTypes = {
-  //   createBlog: PropTypes.func.isRequired
-  // }
+
   return (
     <Togglable buttonLabel="create blog" ref={blogFormRef}>
     <div>

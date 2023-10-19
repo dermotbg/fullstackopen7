@@ -1,17 +1,13 @@
-import { useSelector } from "react-redux"
 import { useMatch } from "react-router-dom"
 
 const User = ({ users }) => {
-    // const users = useSelector(state => state.allUsers)
     const match = useMatch('/user/:id')
     
     if(!users) return <div>user not found...yet....</div>
+    
     const user = match 
         ? users.find(user => user.id === String(match.params.id))
         : null 
-
-    console.log('user',user.blogs)
-
 
     return(
         <div>

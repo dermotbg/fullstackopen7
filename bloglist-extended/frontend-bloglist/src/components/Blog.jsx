@@ -1,10 +1,10 @@
 import { useDispatch } from "react-redux"
 import { useMatch, useNavigate } from "react-router-dom"
-import { likeBlog, removeBlog } from "../reducers/blogReducer"
+import { likeBlog, removeBlog, addComment } from "../reducers/blogReducer"
 
 const Blog = ({ blogs }) => {
     if(!blogs) return <div>blog coming soon....</div>
-    const match = useMatch('/blog/:id')
+    const match = useMatch('/blogs/:id')
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -41,6 +41,15 @@ const Blog = ({ blogs }) => {
           }
           dispatch(likeBlog(update))
     }
+
+    const commentHandler = (event) => {
+        event.preventDefault()
+        const update = {
+            ...blog,
+            comments: blog.comments.concat(event.target.comment.value)
+        }
+        dispatch(addComment(update))
+    }
       
     return(
         <div>
@@ -52,6 +61,25 @@ const Blog = ({ blogs }) => {
                 {blog.user.username === user.username ? (
                 <button onClick={deleteHandler}>delete</button>
                 ) : null}
+            </div>
+            <h2>Comments</h2>
+            <div>
+                <form onSubmit={commentHandler}>
+                    <input type="text" 
+                    name='comment'
+                    placeholder="Add a Comment" 
+                    />
+                    <button>Post Comment</button>
+                </form>
+                {blog.comments.length === 0
+                    ? <p>No comments for this blog...</p>
+                    :
+                    <ul>
+                    {blog.comments.map(c => 
+                        <li key={`${blog.id}-${blog.comments.indexOf(c)}`}>{c}</li>
+                    )}
+                    </ul>   
+                }
             </div>
         </div>
     )

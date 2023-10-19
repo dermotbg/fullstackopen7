@@ -1,14 +1,6 @@
-import { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { pullUsers } from "../reducers/allUsersReducer"
 import { Link } from "react-router-dom"
-const Users = ({ users }) => {
-    // const users = useSelector(state => state.allUsers)
-    // const dispatch = useDispatch()
 
-    // useEffect(() => {
-    //     dispatch(pullUsers())
-    // },[])
+const Users = ({ users }) => {
 
     if(!users) return <div>loading...</div>
     return(

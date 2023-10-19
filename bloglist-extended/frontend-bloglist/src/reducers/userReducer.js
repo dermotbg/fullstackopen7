@@ -13,9 +13,6 @@ const userSlice = createSlice({
     logoutUser(state, action){
       return null
     },
-    // allUsers(state, action){
-    //   return action.payload
-    // }
   }
 })
 
@@ -40,12 +37,5 @@ export const checkUser = () => {
     }
   }
 }
-
-// export const pullUsers = () => {
-//   return async dispatch => {
-//     const response = await getUsers()
-//     dispatch(allUsers(response))
-//   }
-// }
 
 export default userSlice.reducer

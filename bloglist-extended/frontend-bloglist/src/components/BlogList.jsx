@@ -14,7 +14,7 @@ const BlogList = ({ blog }) => {
   return (
     <div className="blogStyle">
       <div className="title">
-        <Link to={`/blog/${blog.id}`}>{blog.title} by {blog.author}</Link>
+        <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
       </div>
     </div>
   )
