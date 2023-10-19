@@ -27,7 +27,9 @@ beforeEach(() => {
 test('renders title/author, but not URL/likes', () => {
   const mockHandler = jest.fn()
 
-  const { container } = render(<BlogList blog={blog} updateBlogs={mockHandler} />)
+  const { container } = render(
+    <BlogList blog={blog} updateBlogs={mockHandler} />
+  )
   const title = container.querySelector('.title')
 
   expect(title).toHaveTextContent('created in test')
@@ -43,7 +45,11 @@ test('URL & likes shown after view button clicked', async () => {
   const mockToggle = jest.fn()
 
   const { container } = render(
-    <BlogList blog={blog} testToggleVisible={mockToggle} updateBlogs={mockUpdate} />
+    <BlogList
+      blog={blog}
+      testToggleVisible={mockToggle}
+      updateBlogs={mockUpdate}
+    />
   ) //mockUpdate needed for component requirement
   const button = screen.getByText('view')
 

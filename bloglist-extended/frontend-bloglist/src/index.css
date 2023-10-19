@@ -12,3 +12,8 @@
   padding: 10px 0 0 2px;
   margin: 5px 0 5px 0;
 }
+
+.logo {
+  max-width: 160px;
+  max-height: 160px;
+}

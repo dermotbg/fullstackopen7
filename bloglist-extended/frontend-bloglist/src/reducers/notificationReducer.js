@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit'
 
 const notificationSlice = createSlice({
   name: 'notification',
   initialState: {
     currentMessage: '',
-    isError: false,
+    isError: false
   },
   reducers: {
     currentMessage(state, action) {
@@ -13,24 +13,26 @@ const notificationSlice = createSlice({
     resetMessage(state, action) {
       return {
         currentMessage: '',
-        isError: false,
+        isError: false
       }
-    },
+    }
   }
 })
 
 export const { currentMessage, resetMessage } = notificationSlice.actions
 
 export const setNotification = (message, error) => {
-  return async dispatch => {
-    await dispatch(currentMessage({
-      currentMessage: message,
-      isError: error
-    }))
+  return async (dispatch) => {
+    await dispatch(
+      currentMessage({
+        currentMessage: message,
+        isError: error
+      })
+    )
     setTimeout(() => {
       dispatch(resetMessage())
     }, 5000)
-}}
-
+  }
+}
 
 export default notificationSlice.reducer

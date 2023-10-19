@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { getUsers } from "../services/users"
+import { createSlice } from '@reduxjs/toolkit'
+import { getUsers } from '../services/users'
 
 const allUsersSlice = createSlice({
   name: 'user',
   initialState: null,
   reducers: {
-    allUsers(state, action){
+    allUsers(state, action) {
       return action.payload
     }
   }
@@ -14,7 +14,7 @@ const allUsersSlice = createSlice({
 export const { allUsers } = allUsersSlice.actions
 
 export const pullUsers = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     const response = await getUsers()
     dispatch(allUsers(response))
   }

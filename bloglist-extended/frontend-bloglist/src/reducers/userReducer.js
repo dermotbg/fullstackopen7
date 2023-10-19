@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit"
-import loginService from "../services/login"
+import { createSlice } from '@reduxjs/toolkit'
+import loginService from '../services/login'
 import blogService from '../services/blogs'
-import { getUsers } from "../services/users"
+import { getUsers } from '../services/users'
 
 const userSlice = createSlice({
   name: 'user',
@@ -10,16 +10,16 @@ const userSlice = createSlice({
     setUser(state, action) {
       return action.payload
     },
-    logoutUser(state, action){
+    logoutUser(state, action) {
       return null
-    },
+    }
   }
 })
 
 export const { setUser, logoutUser, allUsers } = userSlice.actions
 
-export const loginReq = userObj => {
-  return async dispatch => {
+export const loginReq = (userObj) => {
+  return async (dispatch) => {
     const user = await loginService.login(userObj)
     blogService.setToken(user.token)
     window.localStorage.setItem('loggedInAppUser', JSON.stringify(user))
@@ -28,7 +28,7 @@ export const loginReq = userObj => {
 }
 
 export const checkUser = () => {
-  return dispatch => {
+  return (dispatch) => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInAppUser')
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON)

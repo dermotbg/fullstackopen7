@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-const BlogList = ({ blog }) => {
+import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+// import { CommentIcon } from '@mui/icons-material'
 
+const BlogList = ({ blog }) => {
   const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
   if (!user) return null
 
@@ -12,11 +14,11 @@ const BlogList = ({ blog }) => {
   }
 
   return (
-    <div className="blogStyle">
-      <div className="title">
-        <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
-      </div>
-    </div>
+    <ListItem disablePadding>
+      <ListItemButton component={Link} to={`/blogs/${blog.id}`} >
+        <ListItemText style={{ textAlign: 'left' }} primary={`${blog.title} by ${blog.author}`}/>
+      </ListItemButton>
+    </ListItem>
   )
 }
 
