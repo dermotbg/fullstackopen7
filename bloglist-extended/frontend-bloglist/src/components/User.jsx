@@ -1,3 +1,4 @@
+import { List, ListItem, Typography } from '@mui/material'
 import { useMatch } from 'react-router-dom'
 
 const User = ({ users }) => {
@@ -11,13 +12,13 @@ const User = ({ users }) => {
 
   return (
     <div>
-      <h1>{user.name}</h1>
-      <h3>Added Blogs:</h3>
-      <ul>
+      <Typography variant='h3'>{user.name}</Typography>
+      <Typography variant='h4' color='primary'><em>Added Blogs:</em></Typography>
+      <List>
         {user.blogs.map((u) => (
-          <li key={u.id}>{u.title}</li>
+          <ListItem key={u.id}>{u.title}</ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }
