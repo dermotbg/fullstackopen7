@@ -1,30 +1,25 @@
 import { useState, useEffect, useRef, useContext } from 'react'
-import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NotificationContext from './context/notificationContext'
+import BlogsContext from './context/blogContext'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
-  // const [errorMessage, setErrorMessage] = useState(null)
-  // const [isError, setIsError] = useState(false)
+  
   const [notification, notificationDispatch] = useContext(NotificationContext)
-
-
-
+  const [blogs, blogsDispatch] = useContext(BlogsContext)
+  
+  const queryClient = useQueryClient()
   const blogFormRef = useRef()
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInAppUser')
@@ -64,31 +59,23 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (blogObj) => {
+  const toggleForm = () => {
     blogFormRef.current.toggleVisible()
-    try {
-      const addUser = { ...blogObj, user: user }
-      const response = await blogService.create(addUser)
-      console.log(response)
-      setBlogs(blogs.concat(response))
-      notificationDispatch({ type: 'SETMSG', payload: `A New Blog: ${response.title} by ${response.author} added` })
-      // setErrorMessage(
-      //   `A New Blog: ${response.title} by ${response.author} added`
-      // )
-      setTimeout(() => {
-        notificationDispatch({ type: 'RESETMSG' })
-        // setErrorMessage(null)
-      }, 5000)
-    } catch (exception) {
-      console.log(exception)
-    }
   }
 
+  const allBlogs = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll
+  })
+
+  useEffect(() => {
+    if(allBlogs.isSuccess) blogsDispatch({ type: 'SETBLOGS', payload: allBlogs.data })
+  },[allBlogs.data])
+  
   const updateBlogs = async () => {
-    const blogs = await blogService.getAll()
-    setBlogs(blogs)
+    queryClient.invalidateQueries({ queryKey: ['blogs'] })
   }
-
+  
   if (user === null) {
     return (
       <div>
@@ -131,10 +118,10 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='create blog' ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
+        <BlogForm user={user} toggleForm={toggleForm}/>
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
+        <BlogList key={blog.id} blog={blog} updateBlogs={updateBlogs}/>
       ))}
     </div>
   )

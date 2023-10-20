@@ -1,10 +1,4 @@
-// import { useReducer } from "react"
-
-
-
 const Notification = ({ message, error }) => {
-
-  
 
   if (message === null) {
     return null

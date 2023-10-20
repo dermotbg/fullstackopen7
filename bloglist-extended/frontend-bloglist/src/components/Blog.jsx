@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { useMatch, useNavigate, Link } from 'react-router-dom'
 import { likeBlog, removeBlog, addComment } from '../reducers/blogReducer'
-import { Button, Container, Box, Chip, Divider, ListItem, List, Typography, TextField, Paper, styled } from '@mui/material'
+import { Button, Divider, ListItem, List, Typography, TextField, Paper, styled } from '@mui/material'
 
 const Blog = ({ blogs }) => {
   const match = useMatch('/blogs/:id')
@@ -94,18 +94,6 @@ const Blog = ({ blogs }) => {
         </Divider>
       ) : null}
 
-      {/* <a href={`https://${blog.url}`}>
-        <div>{blog.url}</div>
-      </a>
-      <div>
-        Likes: {blog.likes} <button onClick={likeHandler}>Like</button>
-      </div>
-      <div>Added By: {blog.user.name}</div>
-      <div>
-        {blog.user.username === user.username ? (
-          <button onClick={deleteHandler}>delete</button>
-        ) : null}
-      </div> */}
       <div>
         <form onSubmit={commentHandler}>
         <Box sx={{ 
@@ -121,7 +109,6 @@ const Blog = ({ blogs }) => {
             <Button type='submit'>Post Comment</Button>
           </Box>
         </form>
-        {/* <Chip icon={<FaceIcon />} label="With Icon" /> */}
         {blog.comments.length === 0 ? (
           <Typography>No comments for this blog...Be the first!</Typography>
         ) : (

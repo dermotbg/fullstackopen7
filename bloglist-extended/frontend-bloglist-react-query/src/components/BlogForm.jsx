@@ -1,54 +1,67 @@
-import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import blogService from '../services/blogs'
+import { useNotiDispatch } from '../context/notificationContext'
 
-const BlogForm = ({ createBlog }) => {
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+const BlogForm = ({ user, toggleForm }) => {
+  const queryClient = useQueryClient()
+  const dispatchNoti = useNotiDispatch()
 
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      dispatchNoti({ type: 'SETMSG', payload: `A New Blog: ${response.title} by ${response.author} added` })
+      setTimeout(() => {
+        dispatchNoti({ type: 'RESETMSG' })
+      }, 5000)
+    }
+  })
+  
+  
+  
   const addBlog = (event) => {
     event.preventDefault()
-    createBlog({
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    })
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
+    try {
+      const blogObj = ({
+        title: event.target.title.value,
+        author: event.target.author.value,
+        url: event.target.url.value,
+        user: user
+      })
+      console.log('blogobj', blogObj)
+      newBlogMutation.mutate(blogObj)
+    } 
+    catch (exception) {
+      console.log(exception)
+    }
   }
-  BlogForm.propTypes = {
-    createBlog: PropTypes.func.isRequired
-  }
+
   return (
     <div>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
           <input
-            value={newTitle}
-            onChange={(event) => setNewTitle(event.target.value)}
+            name='title'
             placeholder='title'
             id='title'
           />
         </div>
         <div>
           <input
-            value={newAuthor}
-            onChange={(event) => setNewAuthor(event.target.value)}
+            name='author'
             placeholder='author'
             id='author'
           />
         </div>
         <div>
           <input
-            value={newUrl}
-            onChange={(event) => setNewUrl(event.target.value)}
+            name='url'
             placeholder='url'
             id='url'
           />
         </div>
-        <button type='submit' id='submit'>
+        <button type='submit' id='submit' onClick={() => toggleForm()}>
           create
         </button>
       </form>

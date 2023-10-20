@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
+const BlogList = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   const [visible, setVisible] = useState(false)
   // add likes state to add/subtract per load, can be added twice on page reload but not writing liked user data to db
   const [likes, setLikes] = useState(blog.likes)
@@ -60,10 +60,13 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
     }
   }
 
-  Blog.propTypes = {
+  BlogList.propTypes = {
     blog: PropTypes.object.isRequired,
     updateBlogs: PropTypes.func.isRequired
   }
+
+
+  if(!blog.user) return <div>loading...</div>
 
   return (
     <div className='blogStyle'>
@@ -88,4 +91,4 @@ const Blog = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   )
 }
 
-export default Blog
+export default BlogList
