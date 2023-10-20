@@ -67,7 +67,8 @@ const App = () => {
   const addBlog = async (blogObj) => {
     blogFormRef.current.toggleVisible()
     try {
-      const response = await blogService.create(blogObj)
+      const addUser = { ...blogObj, user: user }
+      const response = await blogService.create(addUser)
       console.log(response)
       setBlogs(blogs.concat(response))
       notificationDispatch({ type: 'SETMSG', payload: `A New Blog: ${response.title} by ${response.author} added` })
