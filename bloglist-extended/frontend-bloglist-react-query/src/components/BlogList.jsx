@@ -1,15 +1,30 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import blogService from '../services/blogs'
+import { useBlogDispatch } from '../context/blogContext'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 
 const BlogList = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => {
   const [visible, setVisible] = useState(false)
-  // add likes state to add/subtract per load, can be added twice on page reload but not writing liked user data to db
-  const [likes, setLikes] = useState(blog.likes)
 
+  const queryClient = useQueryClient()
   const showWhenVisible = { display: visible ? '' : 'none' }
 
   const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))
+
+  const newLikeMutation = useMutation({
+    mutationFn: blogService.like,
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
 
   const toggleVisible = () => {
     setVisible(!visible)
@@ -18,29 +33,20 @@ const BlogList = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => 
     }
   }
 
-  const likeHandler = async (event) => {
+  const likeHandler = (event) => {
     if (testLikeHandler) {
       testLikeHandler()
       return
     }
     event.preventDefault()
-    const blogObj = {
-      user: blog.user.id,
-      likes: likes === blog.likes ? blog.likes + 1 : likes - 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
-    }
     try {
-      await blogService.like(blogObj)
-      likes === blog.likes ? setLikes(blog.likes + 1) : setLikes(likes - 1)
+      newLikeMutation.mutate({...blog, user: blog.user.id, likes: blog.likes +1})
     } catch (exception) {
       console.log(exception)
     }
   }
 
-  const deleteHandler = async (event) => {
+  const deleteHandler = (event) => {
     event.preventDefault()
 
     if (
@@ -49,8 +55,7 @@ const BlogList = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => 
     ) {
       blog.token = user.token
       try {
-        await blogService.deleteBlog(blog)
-        updateBlogs()
+        deleteMutation.mutate(blog)
         alert('Blog deleted')
       } catch (exception) {
         console.log(exception)
@@ -77,9 +82,9 @@ const BlogList = ({ blog, updateBlogs, testToggleVisible, testLikeHandler }) => 
       <div style={showWhenVisible} className='extraInfo'>
         <div>{blog.url}</div>
         <div className='likeContainer'>
-          likes: {likes}{' '}
+          likes: {blog.likes}{' '}
           <button onClick={likeHandler} className='likeButton'>
-            {likes === blog.likes ? 'like' : 'unlike'}
+            like
           </button>
         </div>
         <div>{blog.user.name ? blog.user.name : user.name}</div>
