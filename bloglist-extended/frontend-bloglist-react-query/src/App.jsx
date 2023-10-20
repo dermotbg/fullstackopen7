@@ -7,67 +7,70 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import NotificationContext from './context/notificationContext'
 import BlogsContext from './context/blogContext'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import LoginContext from './context/loginContext'
 
 const App = () => {
-
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const [blogs, blogsDispatch] = useContext(BlogsContext)
+  const [user, userDispatch] = useContext(LoginContext)
   
   const queryClient = useQueryClient()
   const blogFormRef = useRef()
 
+  const loginMutation = useMutation({
+    mutationFn: loginService.login,
+    onSuccess:(response) => {
+      userDispatch({ type: 'SETUSER', payload: response })
+      window.localStorage.setItem('loggedInAppUser', JSON.stringify(response))
+      blogService.setToken(user.token)
+    },
+    onError: (response) => {
+      console.log(resonse)
+      notificationDispatch({ type: 'SETERROR', payload: true  })
+      notificationDispatch({ type: 'SETMSG', payload: 'Wrong Credentials'  })
+      setTimeout(() => {
+        notificationDispatch({ type: 'RESETMSG' })
+      }, 5000)
+    }
+  })
+
+  // check login on load
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem('loggedInAppUser')
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON)
-      setUser(user)
       blogService.setToken(user.token)
     }
   }, [])
-
-  const handleLogin = async (event) => {
+  
+  const handleLogin = (event) => {
     event.preventDefault()
-    try {
-      const user = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedInAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      console.log(exception)
-      // setIsError(true)
-      notificationDispatch({ type: 'SETERROR', payload: true  })
-      notificationDispatch({ type: 'SETMSG', payload: 'Wrong Credentials'  })
-      // setErrorMessage('Wrong Credentials')
-      setTimeout(() => {
-        // setErrorMessage(null)
-      notificationDispatch({ type: 'RESETMSG' })
-      }, 5000)
-    }
+    const userObj = {
+      username: event.target.username.value,
+      password: event.target.password.value
+    } 
+    loginMutation.mutate(userObj)
   }
 
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedInAppUser')
-    setUser(null)
+    userDispatch({ type: 'CLEARUSER', payload: null })
   }
 
   const toggleForm = () => {
     blogFormRef.current.toggleVisible()
   }
-
+  
+  // Initial GET req for blogs
   const allBlogs = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll
   })
 
+  // req blogs on data change
   useEffect(() => {
     if(allBlogs.isSuccess) blogsDispatch({ type: 'SETBLOGS', payload: allBlogs.data })
   },[allBlogs.data])
@@ -86,20 +89,16 @@ const App = () => {
             username
             <input
               type='text'
-              value={username}
-              name='Username'
+              name='username'
               className='username'
-              onChange={({ target }) => setUsername(target.value)}
             />
           </div>
           <div>
             password
             <input
               type='password'
-              value={password}
-              name='Password'
+              name='password'
               className='password'
-              onChange={({ target }) => setPassword(target.value)}
             />
           </div>
           <button type='Submit' id='loginButton'>
