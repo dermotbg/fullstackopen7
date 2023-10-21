@@ -7,6 +7,9 @@
   padding: 10px;
   margin-bottom: 10px;
 }
+.ul {
+  padding: 0;
+}
 .blogStyle {
   border: solid 1px black;
   padding: 10px 0 0 2px;

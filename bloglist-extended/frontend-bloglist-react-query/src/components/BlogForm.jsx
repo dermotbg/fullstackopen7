@@ -10,28 +10,28 @@ const BlogForm = ({ user, toggleForm }) => {
     mutationFn: blogService.create,
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
-      dispatchNoti({ type: 'SETMSG', payload: `A New Blog: ${response.title} by ${response.author} added` })
+      dispatchNoti({
+        type: 'SETMSG',
+        payload: `A New Blog: ${response.title} by ${response.author} added`
+      })
       setTimeout(() => {
         dispatchNoti({ type: 'RESETMSG' })
       }, 5000)
     }
   })
-  
-  
-  
+
   const addBlog = (event) => {
     event.preventDefault()
     try {
-      const blogObj = ({
+      const blogObj = {
         title: event.target.title.value,
         author: event.target.author.value,
         url: event.target.url.value,
         user: user
-      })
+      }
       console.log('blogobj', blogObj)
       newBlogMutation.mutate(blogObj)
-    } 
-    catch (exception) {
+    } catch (exception) {
       console.log(exception)
     }
   }
@@ -41,25 +41,13 @@ const BlogForm = ({ user, toggleForm }) => {
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
-          <input
-            name='title'
-            placeholder='title'
-            id='title'
-          />
+          <input name='title' placeholder='title' id='title' />
         </div>
         <div>
-          <input
-            name='author'
-            placeholder='author'
-            id='author'
-          />
+          <input name='author' placeholder='author' id='author' />
         </div>
         <div>
-          <input
-            name='url'
-            placeholder='url'
-            id='url'
-          />
+          <input name='url' placeholder='url' id='url' />
         </div>
         <button type='submit' id='submit' onClick={() => toggleForm()}>
           create
