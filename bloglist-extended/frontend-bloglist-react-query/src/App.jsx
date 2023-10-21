@@ -1,7 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react'
-import BlogList from './components/BlogList'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
+import { useEffect, useContext } from 'react'
 import Notification from './components/Notification'
 import Users from './components/Users'
 import User from './components/User'
@@ -11,18 +8,20 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import NotificationContext from './context/notificationContext'
 import BlogsContext from './context/blogContext'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import LoginContext from './context/loginContext'
 
-import { Route, Routes, Link, useLocation } from 'react-router-dom'
+import 'semantic-ui-css/semantic.min.css'
+import { Menu, Button, Form, Icon, Header } from 'semantic-ui-react'
+import styled from 'styled-components'
+
+import { Route, Routes, Link } from 'react-router-dom'
 
 const App = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const [blogs, blogsDispatch] = useContext(BlogsContext)
   const [login, loginDispatch] = useContext(LoginContext)
 
-  const queryClient = useQueryClient()
-  // const blogFormRef = useRef()
 
   const loginMutation = useMutation({
     mutationFn: loginService.login,
@@ -66,9 +65,6 @@ const App = () => {
     loginDispatch({ type: 'CLEARUSER', payload: null })
   }
 
-  // const toggleForm = () => {
-  //   blogFormRef.current.toggleVisible()
-  // }
 
   // Initial GET req for blogs
   const allBlogs = useQuery({
@@ -82,63 +78,73 @@ const App = () => {
       blogsDispatch({ type: 'SETBLOGS', payload: allBlogs.data })
   }, [allBlogs.data])
 
-  const updateBlogs = async () => {
-    queryClient.invalidateQueries({ queryKey: ['blogs'] })
-  }
 
   if (login === null) {
     return (
       <div>
-        <div>
-          <Link style={{ padding: 5 }} to={'/'}>
+        <Menu>
+          <Menu.Item name='home' as={Link} to={'/'}>
             Home
-          </Link>
-          <Link style={{ padding: 5 }} to={'/users'}>
-            Users
-          </Link>
-        </div>
-        <h2>Log in to application</h2>
+          </Menu.Item>
+        </Menu>
+        <Header as={'h2'} textAlign='center' icon>
+          <Icon name='sign-in' />
+          Log in to application
+        </Header>
         <Notification
           message={notification.message}
           error={notification.isError}
         />
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input type='text' name='username' className='username' />
-          </div>
-          <div>
-            password
-            <input type='password' name='password' className='password' />
-          </div>
-          <button type='Submit' id='loginButton'>
-            Login
-          </button>
-        </form>
+        <Form onSubmit={handleLogin}>
+          <Form.Group id='formContainer'>
+            <Form.Input
+              label='Enter Username'
+              type='text'
+              name='username'
+              className='username'
+            />
+            <Form.Input
+              label='Enter Password'
+              type='password'
+              name='password'
+              className='password'
+            />
+          </Form.Group>
+          <Form.Group id='formContainer'>
+            <Button type='submit' id='loginButton' animated>
+              <Button.Content visible>Login</Button.Content>
+              <Button.Content hidden>
+                <Icon name='arrow right' />
+              </Button.Content>
+            </Button>
+          </Form.Group>
+        </Form>
       </div>
     )
   }
   return (
     <div>
-      <div>
-        <Link style={{ padding: 5 }} to={'/'}>
+      <Menu>
+        <Menu.Item name='home' as={Link} to={'/'}>
           Home
-        </Link>
-        <Link style={{ padding: 5 }} to={'/users'}>
+        </Menu.Item>
+        <Menu.Item name='users' as={Link} to={'/users'}>
           Users
-        </Link>
-        {login.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </div>
-      <h2>blogs</h2>
+        </Menu.Item>
+        <Menu.Item>{login.name} logged in</Menu.Item>
+        <Menu.Item position='right'>
+          <Button onClick={handleLogout} className='secondary button' animated>
+            <Button.Content visible>Logout</Button.Content>
+            <Button.Content hidden>
+              <Icon name='arrow left' />
+            </Button.Content>
+          </Button>
+        </Menu.Item>
+      </Menu>
       <Notification
         message={notification.message}
         error={notification.isError}
       />
-      <p>
-        {login.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
       <Routes>
         <Route path='/' element={<Home blogs={blogs} login={login} />} />
         <Route path='/users' element={<Users />} />

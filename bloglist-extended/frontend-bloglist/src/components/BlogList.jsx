@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-// import { CommentIcon } from '@mui/icons-material'
+import { ListItem, ListItemButton, ListItemText } from '@mui/material'
 
 const BlogList = ({ blog }) => {
   const user = JSON.parse(window.localStorage.getItem('loggedInAppUser'))

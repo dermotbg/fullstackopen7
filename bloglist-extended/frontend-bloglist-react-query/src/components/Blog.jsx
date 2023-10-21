@@ -2,6 +2,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMatch, useNavigate, Link } from 'react-router-dom'
 import blogService from '../services/blogs'
 
+import {
+  Button,
+  Container,
+  Form,
+  Header,
+  Icon,
+  Label,
+  List
+} from 'semantic-ui-react'
+
 const Blog = ({ blogs }) => {
   const match = useMatch('/blogs/:id')
   const queryClient = useQueryClient()
@@ -81,53 +91,81 @@ const Blog = ({ blogs }) => {
 
   return (
     <div>
-      <h1>{blog.title}</h1>
-      <h2>
-        <strong>
-          <em>{blog.author}</em>
-        </strong>
-      </h2>
-      <p>Info:</p>
-      <Link to={`https://${blog.url}`}>
-        <p>{blog.url}</p>
-      </Link>
-      <p>
-        <strong>Likes:</strong> {blog.likes}
-      </p>
+      <Container textAlign='left'>
+        <Header as={'h1'}>{blog.title}</Header>
+      </Container>
+      <Container textAlign='left'>
+        <Header as={'h2'}>
+          <strong>
+            <em>{blog.author}</em>
+          </strong>
+        </Header>
+      </Container>
+      <Container textAlign='center'>
+        <Header as={'h3'}>Info:</Header>
+        <br />
+        <em>Find the blog here:</em>
+        <Link to={`https://${blog.url}`}>
+          <p>{blog.url}</p>
+        </Link>
+        <br />
+        <div>
+          <em>Like the blog here:</em>
+        </div>
+        <Button as='div' labelPosition='right'>
+          <Button color='blue' onClick={likeHandler}>
+            <Icon name='heart' />
+            Like
+          </Button>
+          <Label as='a' basic color='black' pointing='left'>
+            {blog.likes}
+          </Label>
+        </Button>
 
-      <button onClick={likeHandler} color='primary'>
-        Like This Blog
-      </button>
-
-      <p>
-        Added By: <em>{blog.user.name}</em>
-      </p>
-      {blog.user.username === user.username ? (
-        <button onClick={deleteHandler}>delete</button>
-      ) : null}
-
+        <p>
+          {' '}
+          Added By: <em>{blog.user.name}</em>
+        </p>
+        {blog.user.username === user.username ? (
+          <Button onClick={deleteHandler} animated>
+            <Button.Content visible>Delete</Button.Content>
+            <Button.Content hidden>
+              <Icon name='trash' />
+            </Button.Content>
+          </Button>
+        ) : null}
+      </Container>
       <div>
-        <form onSubmit={commentHandler}>
-          <h6>
+        <br />
+        <Container>
+          <Header as={'h2'}>
             <em>Comments</em>
-          </h6>
-          <input
-            placeholder='Add a Comment'
-            label='Add a Comment'
-            name='comment'
-            id='title'
-          />
-          <button type='submit'>Post Comment</button>
-        </form>
-        {blog.comments.length === 0 ? (
-          <p>No comments for this blog...Be the first!</p>
-        ) : (
-          <ul>
-            {blog.comments.map((c) => (
-              <li key={`${blog.id}-${blog.comments.indexOf(c)}`}>{c}</li>
-            ))}
-          </ul>
-        )}
+          </Header>
+          <Form onSubmit={commentHandler}>
+            <Form.Input
+              placeholder='Add a Comment'
+              label='Add a Comment'
+              name='comment'
+              id='title'
+            />
+            <Button type='submit' color='green'>
+              Post Comment
+            </Button>
+          </Form>
+          {blog.comments.length === 0 ? (
+            <p>
+              <Icon name='frown' /> No comments for this blog...Be the first!
+            </p>
+          ) : (
+            <List>
+              {blog.comments.map((c) => (
+                <List.Item key={`${blog.id}-${blog.comments.indexOf(c)}`}>
+                  <Icon name='user' /> {c}
+                </List.Item>
+              ))}
+            </List>
+          )}
+        </Container>
       </div>
     </div>
   )

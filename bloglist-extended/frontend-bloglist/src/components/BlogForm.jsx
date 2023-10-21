@@ -31,7 +31,6 @@ const BlogForm = ({ testCreateBlog }) => {
       )
     )
   }
-  // if (!blogFormRef.current === 'undefined') return <div>Loading</div>
 
   return (
     <Togglable buttonLabel='create blog' ref={blogFormRef}>
