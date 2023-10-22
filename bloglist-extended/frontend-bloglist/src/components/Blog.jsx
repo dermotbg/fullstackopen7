@@ -1,7 +1,8 @@
 import { useDispatch } from 'react-redux'
 import { useMatch, useNavigate, Link } from 'react-router-dom'
 import { likeBlog, removeBlog, addComment } from '../reducers/blogReducer'
-import { Button, Divider, ListItem, List, Typography, TextField, Paper, styled } from '@mui/material'
+import { Button, Box, Divider, ListItem, List, Typography, TextField, styled } from '@mui/material'
+import { v4 as uuidv4 } from 'uuid' 
 
 const Blog = ({ blogs }) => {
   const match = useMatch('/blogs/:id')
@@ -115,7 +116,7 @@ const Blog = ({ blogs }) => {
           
             <List>
                 {blog.comments.map((c) => (
-                 <ListItem key={`${blog.id}-${blog.comments.indexOf(c)}`} sx={{ padding: 2 }}> &#8226; {c} </ListItem>
+                 <ListItem key={uuidv4()} sx={{ padding: 2 }}> &#8226; {c} </ListItem>
                 ))}
           </List>
           

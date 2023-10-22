@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useMatch, useNavigate, Link } from 'react-router-dom'
 import blogService from '../services/blogs'
+import { v4 as uuidv4 } from 'uuid'
 
 import {
   Button,
@@ -159,7 +160,7 @@ const Blog = ({ blogs }) => {
           ) : (
             <List>
               {blog.comments.map((c) => (
-                <List.Item key={`${blog.id}-${blog.comments.indexOf(c)}`}>
+                <List.Item key={uuidv4()}>
                   <Icon name='user' /> {c}
                 </List.Item>
               ))}

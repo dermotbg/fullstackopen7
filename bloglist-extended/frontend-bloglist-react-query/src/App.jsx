@@ -13,7 +13,6 @@ import LoginContext from './context/loginContext'
 
 import 'semantic-ui-css/semantic.min.css'
 import { Menu, Button, Form, Icon, Header } from 'semantic-ui-react'
-import styled from 'styled-components'
 
 import { Route, Routes, Link } from 'react-router-dom'
 
@@ -21,7 +20,6 @@ const App = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const [blogs, blogsDispatch] = useContext(BlogsContext)
   const [login, loginDispatch] = useContext(LoginContext)
-
 
   const loginMutation = useMutation({
     mutationFn: loginService.login,
@@ -65,7 +63,6 @@ const App = () => {
     loginDispatch({ type: 'CLEARUSER', payload: null })
   }
 
-
   // Initial GET req for blogs
   const allBlogs = useQuery({
     queryKey: ['blogs'],
@@ -77,7 +74,6 @@ const App = () => {
     if (allBlogs.isSuccess)
       blogsDispatch({ type: 'SETBLOGS', payload: allBlogs.data })
   }, [allBlogs.data])
-
 
   if (login === null) {
     return (
